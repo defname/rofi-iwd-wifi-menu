@@ -1,0 +1,13 @@
+element-icon {
+/*    enabled: false; */
+}
+element-text {
+    tab-stops: [0px, 350px];
+}
+element-text.active {
+    text-color: #7e8d50;
+}
+
+element-text.urgent {
+    text-color: #e5b566;
+}

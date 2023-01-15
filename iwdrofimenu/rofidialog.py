@@ -15,7 +15,7 @@ class RofiDialog:
     """Simple class to build the input for rofi to create a simple
     rofi-driven interface
     """
-    def __init__(self, prompt=None, message=None, settings=None):
+    def __init__(self, prompt=None, message=None, data=None, settings=None):
         """Initialize the object and set retrieve the rofi environment
         variables"""
         self.retv = os.environ.get("ROFI_RETV")
@@ -27,6 +27,9 @@ class RofiDialog:
 
         if message is not None:
             self.set_option("message", message)
+
+        if data is not None:
+            self.set_option("data", data)
 
         if settings is not None:
             for key, value in settings.items():
@@ -64,4 +67,43 @@ class RofiDialog:
             self.out(f"{text}\0{option_str}\n")
         else:
             self.out(f"{text}\n")
+
+
+class RofiSimpleDialog(RofiDialog):
+    """Create simple dialogs quickly by just passing a list of entries.
+    
+    Just pass an additional parameter to the constructor method, holding
+    the entries for the dialog. The list must have the from
+    entries = [
+        {
+            "caption": "Entry's text",  # may contain pango markup
+            "icon": "firefox",          # not used
+            "meta": "search tags",      # not shown, but searchable tags
+            "nonselectable": "true"     # if true the entry is not selectable
+            "info": "cmd#something"     # some string to pass back to the
+        }                               #  main program in the ROFI_INFO
+    ]                                   #  environment variable
+    
+    Not all entries have to be set. A minmal example would look something
+    like this:
+    entries = [ { "caption": "Title" } ]
+
+    "caption" is the only entry of the dictionary that have to be present
+    """
+    def __init__(self, prompt, message, entries, data=None, no_custom=None):
+        super().__init__(prompt, message=message, data=data)
+
+        if no_custom is not None:
+            self.set_option("no-custom", no_custom)
+
+        for e in entries:
+            if "caption" not in e:
+                continue
+            self.add_row(e["caption"],
+                         icon=e.get("icon", None),
+                         meta=e.get("meta", None),
+                         nonselectable=e.get("nonselectable", None),
+                         info=e.get("info", None)
+                         )
+
 
