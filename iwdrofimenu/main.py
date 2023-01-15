@@ -1,10 +1,9 @@
-#!/bin/env python3
-"""blaballba
-"""
-from rofidialog import RofiSimpleDialog
-from iwd_rofi_dialogs import *
 import os
 import sys
+import preferences
+from .iwd_rofi_dialogs import RofiNetworkList, RofiShowActiveConnection,\
+                             RofiPasswordInput, RofiConfirmDialog
+from .iwdwrapper import IWD
 
 
 class Main:
@@ -68,8 +67,7 @@ class Main:
             self.iwd.update_connection_state()
         else:
             RofiConfirmDialog("Are you sure",
-                              message=f"Do you really want \
-                                      discard {self.iwd.ssid()}?",
+                              message=f"Do you really want discard {self.iwd.ssid()}?",
                               data="",
                               confirm_caption="Yes, discard",
                               confirm_info="cmd#iwd#forget#confirm",
@@ -106,5 +104,3 @@ class Main:
         if result == IWD.ConnectionResult.TIMEOUT:
             self.message = "Connection attempt timed out"
 
-if __name__ == "__main__":
-    Main("wlan0")

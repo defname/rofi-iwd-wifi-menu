@@ -1,8 +1,14 @@
 element-icon {
 /*    enabled: false; */
 }
+element {
+    children: [element-text, element-icon];
+}
 element-text {
     tab-stops: [0px, 350px];
+}
+textbox {
+    tab-stops: [0px];
 }
 element-text.active {
     text-color: #7e8d50;

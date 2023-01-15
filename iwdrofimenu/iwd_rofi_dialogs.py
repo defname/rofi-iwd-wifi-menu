@@ -1,12 +1,13 @@
-from iwdwrapper import IWD
-from rofidialog import RofiDialog, RofiSimpleDialog
 from string import Template
+from preferences import *
+from .iwdwrapper import IWD
+from .rofidialog import RofiDialog, RofiSimpleDialog
 
 
 class RofiBasicDialog(RofiDialog):
     def __init__(self, prompt, message, data=None, theme_snippet=""):
         self.settings = {"theme": 
-                            f"@import \"../res/style.rasi\" {theme_snippet}",
+                            f"@import \"{RES_DIR}/style.rasi\" {theme_snippet}",
                          "markup-rows": "true"
                          }
         super().__init__(prompt, message, data, self.settings)
@@ -16,7 +17,7 @@ class RofiPasswordInput(RofiSimpleDialog):
     def __init__(self, ssid, prompt="Passphrase", message=None):
         entries = [{"caption": "Cancel",
                     "info": "cmd#abort",
-                    "icon": "../res/icons/bright/arrow-left.png"
+                    "icon": RES_DIR + "/" + ICONS["back"]
                     }]
         if message is None:
             message = f"Please enter the passphrase for {ssid}"
@@ -33,11 +34,11 @@ class RofiConfirmDialog(RofiSimpleDialog):
                  abort_caption="Back", abort_info=""):
         entries = [{"caption": confirm_caption,
                     "info": confirm_info,
-                    "icon": "../res/icons/bright/confirm.png"
+                    "icon": RES_DIR + "/" + ICONS["confirm"]
                     },
                    {"caption": abort_caption,
                     "info": abort_info,
-                    "icon": "../res/icons/bright/arrow-left.png"
+                    "icon": RES_DIR + "/" + ICONS["abort"]
                     }
                    ]
         super().__init__(prompt,
@@ -70,11 +71,11 @@ class RofiShowActiveConnection(RofiIWDDialog):
 
         # add menu items
         self.add_row("Back",
-                     icon="../res/icons/bright/arrow-left.png"
+                     icon=RES_DIR + "/" + ICONS["back"]
                      )
         self.add_row("Disconnect",
                      info="cmd#iwd#disconnect",
-                     icon="../res/icons/bright/network-wireless-disabled.png"
+                     icon=RES_DIR + "/" + ICONS["disconnect"]
                      )
         
         for name, value in self.iwd.state.items():
@@ -82,7 +83,7 @@ class RofiShowActiveConnection(RofiIWDDialog):
         
         self.add_row("Forget connection",
                      info="cmd#iwd#forget",
-                     icon="../res/icons/bright/trash.png"
+                     icon=RES_DIR + "/" + ICONS["trash"]
                      )
 
 
@@ -97,11 +98,12 @@ class RofiNetworkList(RofiIWDDialog):
         # add menu items
         self.add_row("Scan",
                      info="cmd#iwd#scan",
-                     icon="../res/icons/bright/search.png"
+                     icon=RES_DIR + "/" + ICONS["scan"]
                      )
         self.add_row("Refresh",
                      info="cmd#refresh",
-                     icon="../res/icons/bright/refresh.png")
+                     icon=RES_DIR + "/" + ICONS["refresh"]
+                     )
         
         self.networks = self.iwd.get_networks()
         self.mark_known_or_active_networks(offset=2)
@@ -125,17 +127,10 @@ class RofiNetworkList(RofiIWDDialog):
             self.add_network_to_dialog(nw)
 
     def choose_icon(self, nw):
-        quality_str = {1: "weak",
-                       2: "weak",
-                       3: "ok",
-                       4: "good",
-                       5: "excellent"
-                       }
-        filename = "../res/icons/bright/network-wireless-signal-"
-        filename += quality_str[nw["quality"]]
         if nw["security"] != "open":
-            filename += "-encrypted"
-        filename += ".png"
+            filename = RES_DIR + "/" + ICONS[f"wifi-signal-{nw['quality']}"]
+        else:
+            filename = RES_DIR + "/" + ICONS[f"wifi-encrypted-signal-{nw['quality']}"]
         return filename
 
     def add_network_to_dialog(self, nw):
