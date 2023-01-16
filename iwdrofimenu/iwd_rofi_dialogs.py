@@ -1,6 +1,6 @@
 """Classes defining the rofi dialogs for this script"""
 from string import Template
-from preferences import RES_DIR, ICONS
+from preferences import RES_DIR, ICONS, TEMPLATES, SIGNAL_QUALITY_TEXT
 from .rofidialog import RofiDialog, RofiSimpleDialog
 
 
@@ -82,6 +82,8 @@ class RofiShowActiveConnection(RofiIWDDialog):
     Show details to the active connection as found in iwctl, add "Back"
     and "Disconnect" buttons and the possibility to "forget" the connection.
     """
+    row_template = Template(TEMPLATES["connection-details-entry"])
+
     def __init__(self, iwd, message="", data=None):
         super().__init__("SSID", iwd,
                          message=message,
@@ -101,7 +103,13 @@ class RofiShowActiveConnection(RofiIWDDialog):
                      )
 
         for name, value in self.iwd.state.items():
-            self.add_row(f"{name}\t<b>{value}</b>", nonselectable="true")
+            self.add_row(
+                    self.row_template.substitute(
+                        property=name,
+                        value=value
+                        ),
+                    nonselectable="true"
+                    )
 
         self.add_row("Forget connection",
                      info="cmd#iwd#forget",
@@ -117,7 +125,7 @@ class RofiNetworkList(RofiIWDDialog):
     Choose correct icons depending on the quality of the wifi signal and
     if it's an open or encrypted network.
     """
-    row_template = Template("<b>$ssid</b>")
+    row_template = Template(TEMPLATES["network-list-entry"])
 
     def __init__(self, iwd, message=None, data=None):
         super().__init__("SSID", iwd, message=message, data=data)
@@ -166,6 +174,7 @@ class RofiNetworkList(RofiIWDDialog):
         cmd = f"cmd#iwd#connect{nw['ssid']}"
         if nw["ssid"] == self.iwd.ssid():
             cmd = f"cmd#iwd#showactiveconnection"
+        nw['quality_str'] = SIGNAL_QUALITY_TEXT[nw['quality']]
         self.add_row(self.row_template.substitute(nw),
                      info=cmd,
                      icon=self.choose_icon(nw))
