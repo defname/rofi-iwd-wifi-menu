@@ -2,8 +2,8 @@
 
 Here you can configure most parts of the iwdrofimenu script.
 It's a python file that will be loaded by the script as a submodule, so
-it has to present. Also you must not remove any entry, since there are
-no default values, just this file.
+it has to be present. Also you must not remove any entry, since there are
+no default values somewhere else, it's just this file.
 """
 
 # The name of the wifi device as used in iwctl
@@ -28,10 +28,10 @@ DEVICE = "wlan0"
 # ($property and $value of the connection-details-entry are taken from
 # iwctl station <device> show)
 TEMPLATES = {
-        "network-list-entry":        "$quality_str <b>$ssid</b> $quality ($security)",
+        "network-list-entry": "$quality_str <b>$ssid</b> $quality ($security)",
         "network-list-entry-active": "",
-        "network-list-entry-known":  "",
-        "connection-details-entry":  "$property\t<b>$value</b>",
+        "network-list-entry-known": "",
+        "connection-details-entry": "$property\t<b>$value</b>",
         "prompt_ssid": "SSID",
         "prompt_pass": "Passphrase",
         "prompt_confirm": "Are you sure",
@@ -65,7 +65,7 @@ SIGNAL_QUALITY_TEXT = {
 # (where the iwdrofimenu.py file is located)
 RES_DIR = "res"
 
-# rofi heme file to include, to overwrite global rofi settings.
+# rofi theme file to include, to overwrite global rofi settings.
 # This only make sense, if you do not run it together with other rofi modes,
 # since in this case the theme will be applied to all loaded modes.
 # Possible values are a valid theme filepath (you should use the RED_DIR
