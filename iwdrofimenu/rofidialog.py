@@ -7,9 +7,9 @@ The basic usage is either to pipe the output of this methods to rofi
 or call rofi with in script mode like
 rofi -show SCRIPT -modi "SCRIPT:~/rofi-scripts/script.sh"
 """
-
 import os
 import sys
+
 
 class RofiDialog:
     """Simple class to build the input for rofi to create a simple
@@ -17,7 +17,19 @@ class RofiDialog:
     """
     def __init__(self, prompt=None, message=None, data=None, settings=None):
         """Initialize the object and set retrieve the rofi environment
-        variables"""
+        variables.
+
+        Args:
+            prompt (str): If set it is used as text for the rofi prompt
+            message (str): If set it is used as message text
+            data (str): If set it is used for the data property of rofi,
+                which is passed back to the program in the ROFI_DATA
+                environment variable (accessable with the data property).
+            settings (dict[str, str]): If set it has to be a dictionary
+                with rofi options and their values (see the rofi-script(5)
+                manpage and the rofi documentation).
+        """
+        self.arg = "" if len(sys.argv) < 2 else sys.argv[1]
         self.retv = os.environ.get("ROFI_RETV")
         self.info = os.environ.get("ROFI_INFO")
         self.data = os.environ.get("ROFI_DATA")
@@ -44,11 +56,24 @@ class RofiDialog:
         self.out(f"\0{name}\x1f{value}\n")
 
     def set_message(self, text):
-        selt.set_option("message", text)
+        """Set the text for rofi's message field"""
+        self.set_option("message", text)
 
     def add_row(self, text, icon=None, meta=None, nonselectable=None,
                 info=None):
-        """Add a row to the interface"""
+        """Add a row to the interface.
+
+        Args:
+            text (str): Text to display.
+            icon (str): Name of an icon or filepath to an icon file.
+            meta (str): Text is searched by rofi at user input, but not
+                displayed
+            nonselectable (str): "true" or "false" (as text) if the row
+                should be selectable or not
+            info (str): If set this is passed as in the ROFI_INFO environment
+                (accessable through the info property) to the next iteration
+                of the script
+        """
         self.add_row_dict(text,
                           {
                               "icon": icon,
@@ -71,7 +96,7 @@ class RofiDialog:
 
 class RofiSimpleDialog(RofiDialog):
     """Create simple dialogs quickly by just passing a list of entries.
-    
+
     Just pass an additional parameter to the constructor method, holding
     the entries for the dialog. The list must have the from
     entries = [
@@ -83,7 +108,7 @@ class RofiSimpleDialog(RofiDialog):
             "info": "cmd#something"     # some string to pass back to the
         }                               #  main program in the ROFI_INFO
     ]                                   #  environment variable
-    
+
     Not all entries have to be set. A minmal example would look something
     like this:
     entries = [ { "caption": "Title" } ]
@@ -105,5 +130,4 @@ class RofiSimpleDialog(RofiDialog):
                          nonselectable=e.get("nonselectable", None),
                          info=e.get("info", None)
                          )
-
 
