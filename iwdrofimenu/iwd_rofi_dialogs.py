@@ -1,6 +1,7 @@
 """Classes defining the rofi dialogs for this script"""
 from string import Template
-from preferences import RES_DIR, ICONS, TEMPLATES, SIGNAL_QUALITY_TEXT
+from preferences import RES_DIR, ICONS, TEMPLATES, SIGNAL_QUALITY_TEXT,\
+        ROFI_THEME_FILE
 from .rofidialog import RofiDialog, RofiSimpleDialog
 
 
@@ -10,8 +11,16 @@ class RofiBasicDialog(RofiDialog):
     Just add the stylesheet defined in preferences and enable markup.
     """
     def __init__(self, prompt, message, data=None, theme_snippet=""):
+        """Initialize object.
+
+        Import the rofi theme specified in preferences.py if it's not empty.
+        Activate markup for the rows.
+        """
         self.settings = {"theme": 
-                            f"@import \"{RES_DIR}/style.rasi\" {theme_snippet}",
+                            (f"@import \"{ROFI_THEME_FILE}\""
+                             if ROFI_THEME_FILE else
+                             "")\
+                                    + theme_snippet,
                          "markup-rows": "true"
                          }
         super().__init__(prompt, message, data, self.settings)
@@ -23,12 +32,12 @@ class RofiPasswordInput(RofiSimpleDialog):
     Add a cancel "button" and message. Set no_custom to false.
     """
     def __init__(self, ssid, prompt="Passphrase", message=None):
-        entries = [{"caption": "Cancel",
+        entries = [{"caption": TEMPLATES["cancel"],
                     "info": "cmd#abort",
                     "icon": RES_DIR + "/" + ICONS["back"]
                     }]
         if message is None:
-            message = f"Please enter the passphrase for {ssid}"
+            message = f"Please enter the passphrase for {ssid} and press enter."
         super().__init__(prompt,
                          message=message,
                          entries=entries,
@@ -85,7 +94,8 @@ class RofiShowActiveConnection(RofiIWDDialog):
     row_template = Template(TEMPLATES["connection-details-entry"])
 
     def __init__(self, iwd, message="", data=None):
-        super().__init__("SSID", iwd,
+        super().__init__(TEMPLATES["prompt_ssid"],
+                         iwd,
                          message=message,
                          theme_snippet="",
                          data=data
@@ -94,10 +104,10 @@ class RofiShowActiveConnection(RofiIWDDialog):
         self.iwd.update_connection_state()
 
         # add menu items
-        self.add_row("Back",
+        self.add_row(TEMPLATES["back"],
                      icon=RES_DIR + "/" + ICONS["back"]
                      )
-        self.add_row("Disconnect",
+        self.add_row(TEMPLATES["disconnect"],
                      info="cmd#iwd#disconnect",
                      icon=RES_DIR + "/" + ICONS["disconnect"]
                      )
@@ -111,7 +121,7 @@ class RofiShowActiveConnection(RofiIWDDialog):
                     nonselectable="true"
                     )
 
-        self.add_row("Forget connection",
+        self.add_row(TEMPLATES["discard"],
                      info="cmd#iwd#forget",
                      icon=RES_DIR + "/" + ICONS["trash"]
                      )
@@ -128,16 +138,31 @@ class RofiNetworkList(RofiIWDDialog):
     row_template = Template(TEMPLATES["network-list-entry"])
 
     def __init__(self, iwd, message=None, data=None):
-        super().__init__("SSID", iwd, message=message, data=data)
+        super().__init__(TEMPLATES["prompt_ssid"],
+                         iwd,
+                         message=message,
+                         data=data)
+
+        # if "network-list-entry-active" is not empty prepare template
+        active_entry_template = TEMPLATES["network-list-entry-active"]
+        self.row_template_active = self.row_template
+        if active_entry_template:
+            self.row_template_active = Template(active_entry_template)
+
+        # if "network-list-entry-known" is not empty prepare template
+        known_entry_template = TEMPLATES["network-list-entry-known"]
+        self.row_template_known = self.row_template
+        if known_entry_template:
+            self.row_template_known = Template(known_entry_template)
 
         self.iwd.update_known_networks()
 
         # add menu items
-        self.add_row("Scan",
+        self.add_row(TEMPLATES["scan"],
                      info="cmd#iwd#scan",
                      icon=RES_DIR + "/" + ICONS["scan"]
                      )
-        self.add_row("Refresh",
+        self.add_row(TEMPLATES["refresh"],
                      info="cmd#refresh",
                      icon=RES_DIR + "/" + ICONS["refresh"]
                      )
@@ -171,11 +196,18 @@ class RofiNetworkList(RofiIWDDialog):
         return filename
 
     def add_network_to_dialog(self, nw):
+        text = ""
         cmd = f"cmd#iwd#connect{nw['ssid']}"
-        if nw["ssid"] == self.iwd.ssid():
-            cmd = f"cmd#iwd#showactiveconnection"
         nw['quality_str'] = SIGNAL_QUALITY_TEXT[nw['quality']]
-        self.add_row(self.row_template.substitute(nw),
+        # choose the correct template
+        if nw["ssid"] == self.iwd.ssid():
+            text = self.row_template_active.substitute(nw)
+            cmd = f"cmd#iwd#showactiveconnection"
+        elif nw["ssid"] in self.iwd.known_networks:
+            text = self.row_template_known.substitute(nw)
+        else:
+            text = self.row_template.substitute(nw)
+        self.add_row(text,
                      info=cmd,
                      icon=self.choose_icon(nw))
 

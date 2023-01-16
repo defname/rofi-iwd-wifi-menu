@@ -2,9 +2,11 @@
 """
 import os
 import sys
+from string import Template
 from .iwd_rofi_dialogs import RofiNetworkList, RofiShowActiveConnection,\
                              RofiPasswordInput, RofiConfirmDialog
 from .iwdwrapper import IWD
+from preferences import TEMPLATES
 
 
 class Main:
@@ -65,7 +67,7 @@ class Main:
     def scan(self, dummy):
         """Scan for wifi networks"""
         self.iwd.scan()
-        self.message = "Scanning... Click refresh to update the list."
+        self.message = TEMPLATES["msg_scanning"]
 
     def show_active_connection(self, dummy):
         """Show the dialog for connection details"""
@@ -88,12 +90,14 @@ class Main:
             self.iwd.forget(self.iwd.ssid())
             self.iwd.update_connection_state()
         else:
-            RofiConfirmDialog("Are you sure",
-                              message=f"Do you really want discard {self.iwd.ssid()}?",
+            msg = Template(TEMPLATES["msg_really_discard"])\
+                    .substitute(ssid=self.iwd.ssid())
+            RofiConfirmDialog(TEMPLATES["prompt_confirm"],
+                              message=msg,
                               data="",
-                              confirm_caption="Yes, discard",
+                              confirm_caption=TEMPLATES["confirm_discard"],
                               confirm_info="cmd#iwd#forget#confirm",
-                              abort_caption="Back",
+                              abort_caption=TEMPLATES["back"],
                               abort_info="cmd#iwd#showactiveconnection"
                               )
             sys.exit(0)
@@ -112,7 +116,10 @@ class Main:
             if result == IWD.ConnectionResult.SUCCESS:
                 self.data = ""  # reset data to get back to main dialog
             else:
-                RofiPasswordInput(ssid, message="Could not establish a connection")
+                msg = Template(
+                        TEMPLATES["msg_connection_not_successful_after_pass"])\
+                                .substitute(ssid=ssid)
+                RofiPasswordInput(ssid, message=msg)
                 sys.exit()
         else:
             result = self.iwd.connect(ssid)
@@ -124,9 +131,10 @@ class Main:
             sys.exit(0)
 
         if result == IWD.ConnectionResult.SUCCESS:
-            self.message = "Connected successfully"
+            template_str = TEMPLATES["msg_connection_successful"]
         if result == IWD.ConnectionResult.NOT_SUCCESSFUL:
-            self.message = f"Could not connect to {ssid}"
+            template_str = TEMPLATES["msg_connection_not_successful"]
         if result == IWD.ConnectionResult.TIMEOUT:
-            self.message = "Connection attempt timed out"
+            template_str = TEMPLATES["msg_connection_timeout"]
+        self.message = Template(template_str).substitute(ssid=ssid)
 
