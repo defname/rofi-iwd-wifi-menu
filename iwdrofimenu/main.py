@@ -62,8 +62,8 @@ class Main:
             if self.info.startswith(prefix):
                 action(self, self.info[len(prefix):])
 
-    def scan(self, dummy)
-        """Scan for wifi networks""":
+    def scan(self, dummy):
+        """Scan for wifi networks"""
         self.iwd.scan()
         self.message = "Scanning... Click refresh to update the list."
 
