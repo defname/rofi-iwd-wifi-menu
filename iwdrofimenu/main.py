@@ -109,6 +109,9 @@ class Main:
         """
         print(f"connect to {ssid}", file=sys.stderr)
         if self.data:
+            # in this case this method was triggered because
+            # ROFI_DATA == "cmd#iwd#connect#{ssid}" and the password is passed
+            # by rofi to the script as argument in sys.argv[1]
             if self.info == "cmd#abort":
                 self.data = ""
                 return
