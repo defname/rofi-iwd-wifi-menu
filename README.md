@@ -19,10 +19,22 @@ to use and fits into my *[i3](https://i3wm.org/)* setup, so I wrote this little
 program.
 
 ## Screenshots
-<div align="center">
-<img alt="Screenshot 1" src="screenshot1.png" width="240em" />
-<img alt="Screenshot 2" src="screenshot2.png" width="240em" />
-</div>
+<table>
+<tr>
+<td valign="center">
+  <div><img alt="Screenshot 1" src="screenshot1.png" width="240em" /></div>
+  <div algin="center">main dialog</div>
+</td>
+<td valign="center">
+  <div><img alt="Screenshot 2" src="screenshot2.png" width="240em" /></div>
+  <center>connection details</center>
+</td>
+<td valign="center">
+  <div><img alt="Screenshot 2" src="screenshot3.png" width="240em" /></div>
+  <div text-algin="center">main dialog with rofis -no-config flag</div>
+</td>
+</tr>
+</table>
 
 ## Dependencies
 As you probably guessed, you need a working installation of *iwd*,
