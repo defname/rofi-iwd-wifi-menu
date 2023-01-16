@@ -51,7 +51,7 @@ class RofiConfirmDialog(RofiSimpleDialog):
                     },
                    {"caption": abort_caption,
                     "info": abort_info,
-                    "icon": RES_DIR + "/" + ICONS["abort"]
+                    "icon": RES_DIR + "/" + ICONS["back"]
                     }
                    ]
         super().__init__(prompt,
