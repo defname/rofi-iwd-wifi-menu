@@ -1,0 +1,16 @@
+Installation instructions:
+Run
+  make install
+for a global installation to the /usr directory.
+You can specify a different directory with
+  PREFIX=<dir> make install
+The files will go to <dir>/share/iwdrofimenu and a link <dir>/bin/iwdrofimenu
+will be created
+
+To uninstall the script run
+  make uninstall
+If you specified a different directory for installation, you also have to
+specify it for the uninstallation with
+  PREFIX=<dir> make uninstall
+
+Look at https://github.com/defname/rofi-iwd-wifi-menu for more information.
