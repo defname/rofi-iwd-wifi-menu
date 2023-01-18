@@ -159,7 +159,7 @@ class RofiNetworkList(RofiIWDDialog):
     Choose correct icons depending on the quality of the wifi signal and
     if it's an open or encrypted network.
     """
-    row_template = Template(TEMPLATES["network-list-entry"])
+    row_template = Template(TEMPLATES["network_list_entry"])
 
     def __init__(self, iwd, message=None, data=None):
         super().__init__(TEMPLATES["prompt_ssid"],
@@ -167,14 +167,14 @@ class RofiNetworkList(RofiIWDDialog):
                          message=message,
                          data=data)
 
-        # if "network-list-entry-active" is not empty prepare template
-        active_entry_template = TEMPLATES["network-list-entry-active"]
+        # if "network_list_entry_active" is not empty prepare template
+        active_entry_template = TEMPLATES["network_list_entry_active"]
         self.row_template_active = self.row_template
         if active_entry_template:
             self.row_template_active = Template(active_entry_template)
 
-        # if "network-list-entry-known" is not empty prepare template
-        known_entry_template = TEMPLATES["network-list-entry-known"]
+        # if "network_list_entry_known" is not empty prepare template
+        known_entry_template = TEMPLATES["network_list_entry_known"]
         self.row_template_known = self.row_template
         if known_entry_template:
             self.row_template_known = Template(known_entry_template)

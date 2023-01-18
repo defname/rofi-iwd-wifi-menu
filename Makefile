@@ -1,3 +1,5 @@
+# Makefile just for installation/uninstallation and cleanup
+
 # Filepaths of all project files that should be installed
 SRC_FILES := README.md $(shell echo *.py iwdrofimenu/*.py) $(shell find res -type f -not -name "*.svg")
 # Filepath of the executable
@@ -36,12 +38,8 @@ uninstall:
 	rm -rf $(INSTALL_DIR)
 	rm $(BIN_DIR)/$(LINK_NAME)
 
-pkg:
-	makepkg
-
 clean:
 	rm -r __pycache__
 	rm -r iwdrofimenu/__pycache__
-	makepkg clean
 
 .PHONY: default

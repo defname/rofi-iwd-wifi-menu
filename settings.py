@@ -28,9 +28,9 @@ defaults = {
         "signal_quality_str_3": "███░░",
         "signal_quality_str_4": "████░",
         "signal_quality_str_5": "█████",
-        "network-list-entry": "$quality_str <b>$ssid</b> $quality ($security)",
-        "network-list-entry-active": "",
-        "network-list-entry-known": "",
+        "network_list_entry": "$quality_str <b>$ssid</b> $quality ($security)",
+        "network_list_entry_active": "",
+        "network_list_entry_known": "",
         "connection-details-entry": "$property\t<b>$value</b>",
         "prompt_ssid": "SSID", # this is also the default prompt
         "prompt_pass": "Passphrase",
@@ -81,7 +81,6 @@ config_files = [userdir + "/.config/rofi/iwdrofimenu.conf",
                 userdir + "/.config/iwdrofimenu/config",
                 userdir + "/.config/iwdrofimenu.conf",
                 userdir + "/.iwdrofimenu.conf",
-                userdir + "/tmp/iwdrofimenu.conf",
                 ]
 
 # load default config then userconfigs
