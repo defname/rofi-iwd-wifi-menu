@@ -17,7 +17,7 @@ class Main:
     Handle userinput (recieved as environment variables) and call the suitable
     method to take action.
     """
-    def __new__(self, device="wlan0"):
+    def __init__(self, device="wlan0"):
         """Initialize objbect and do everything.
         
         No other method should be called to use this class.
@@ -45,10 +45,10 @@ class Main:
 
         # check self.data and self.info for commands and apply the associated
         # actions exit programm if apropriate dialog was started
-        self.apply_actions(self, commands)
+        self.apply_actions(commands)
 
         # check if wifi is disabled
-        if self.wifi_is_blocked(self):
+        if self.wifi_is_blocked():
             RofiNoWifiDialog(TEMPLATES["prompt_ssid"])
             sys.exit(0)
 
@@ -71,15 +71,15 @@ class Main:
         if self.data:
             for prefix, action in commands.items():
                 if self.data.startswith(prefix):
-                    action(self, self.data[len(prefix):])
+                    action(self.data[len(prefix):])
                     done = True
-        
+
         # if no command was triggered through ROFI_DATA check ROFI_INFO
         if done or not self.info:
             return
         for prefix, action in commands.items():
             if self.info.startswith(prefix):
-                action(self, self.info[len(prefix):])
+                action(self.info[len(prefix):])
 
     def wifi_is_blocked(self):
         """Check if wifi is disabled.
@@ -97,8 +97,7 @@ class Main:
             if line.find(self.iwd.adapter()) != -1:
                 if line.find(" blocked") != -1:
                     return True
-                else:
-                    return False
+                return False
         raise IOError(f"{self.iwd.device()} not found in rfkill list.")
 
     def block_wifi(self, dummy):
@@ -109,7 +108,7 @@ class Main:
                                 check=False)
         if result.returncode != 0:
             self.message = "An error occured: " + result.stderr
-    
+
     def unblock_wifi(self, dummy):
         """Activate wifi with rfkill"""
         result = subprocess.run(["rfkill", "unblock", "wlan"],
@@ -181,7 +180,7 @@ class Main:
                 sys.exit()
         else:
             result = self.iwd.connect(ssid)
-        
+
         self.iwd.update_connection_state()
 
         if result == IWD.ConnectionResult.NEED_PASSPHRASE:

@@ -38,6 +38,8 @@ uninstall:
 	rm -rf $(INSTALL_DIR)
 	rm $(BIN_DIR)/$(LINK_NAME)
 
+update: uninstall install
+
 clean:
 	rm -r __pycache__
 	rm -r iwdrofimenu/__pycache__
