@@ -133,7 +133,6 @@ class IWD:
                  if m is not None}
         return table
 
-
     def get_state(self, property):
         """Get an entry from the state property.
 

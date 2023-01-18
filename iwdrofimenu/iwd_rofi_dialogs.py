@@ -135,7 +135,9 @@ class RofiShowActiveConnection(RofiIWDDialog):
                      info="cmd#iwd#disconnect",
                      icon=ICONS["disconnect"]
                      )
-
+        self.add_seperator()
+        
+        # add connection infos
         for name, value in self.iwd.state.items():
             self.add_row(
                     self.row_template.substitute(
@@ -145,6 +147,8 @@ class RofiShowActiveConnection(RofiIWDDialog):
                     nonselectable="true"
                     )
 
+        # add "discard" entry
+        self.add_seperator()
         self.add_row(TEMPLATES["discard"],
                      info="cmd#iwd#forget",
                      icon=ICONS["trash"]

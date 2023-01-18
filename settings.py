@@ -77,7 +77,8 @@ defaults = {
 
 # possible locations where to find the config
 userdir = expanduser("~")
-config_files = [userdir + "/.config/rofi/iwdrofimenu.conf",
+config_files = [root_dir + "/iwdrofimenu.conf",
+                userdir + "/.config/rofi/iwdrofimenu.conf",
                 userdir + "/.config/iwdrofimenu/config",
                 userdir + "/.config/iwdrofimenu.conf",
                 userdir + "/.iwdrofimenu.conf",
