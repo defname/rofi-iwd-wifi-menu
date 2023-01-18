@@ -13,7 +13,7 @@ Usage:
 
 Configuration:
   iwdrofimenu --config
-  prins a complete configuration, which you can use as a foundation.
+  prints a complete configuration, which you can use as a foundation.
 
 Requirements:
   You need Python 3, rofi and a working installation of the iwd network daemon
