@@ -41,12 +41,9 @@ program.
 
 ## Dependencies
 As you probably guessed, you need a working installation of *iwd*,
-*[rofi](https://github.com/davatorium/rofi)* and *Python 3* to use this script. You can get all of this from the official repositories of your favorite
+*rofi* and *Python 3* to use this script. All of these can be obtained from the official repositories of your favorite
 Linux distribution.
-But, if you don't already use *iwd* you probably don't want to change your
-wifi daemon (if you use some fancy distribution with an IDE with a lot of
-integrated network buttons, etc. those might not work anymore if you change
-the underlying system).
+However, if you currently do not use iwd, you may not want to switch your wifi daemon as it may cause issues with integrated network buttons and other features in your Linux distribution's desktop environment.
 
 ## Installation
 ### To try it out
@@ -107,7 +104,9 @@ The appearance of *rofi* depends on your local settings and will most likely
 differ from the images above. `rofi` has many options for styling and
 a lot of great themes are out there (for example [those](https://github.com/adi1090x/rofi) are pretty awesome in my oppinion). For more information on customizing your *rofi* setup refer to the [rofi-theme (5) manpages](https://github.com/davatorium/rofi/blob/next/doc/rofi-theme.5.markdown)).
 
-Still, there are some customizations that can be made through a configuration file. You can overwrite *rofi* settings with a custom theme for the script, change all displayed text, and change the icons.
+Note that *iwdrofimenu* marks the list elements for active connections as `active` and for known connections as `urgent`, so they can be styled within the rofi configuration easily.
+
+Still, there are some customizations that can be made through a configuration file. You can overwrite *rofi* settings with a custom theme for the script, change every single string displayed, and change the icons.
 
 ### Configuration Files
 The script will look for configurations in the following files in the given order.
@@ -121,7 +120,7 @@ The script will look for configurations in the following files in the given orde
 None of these files will be created automatically, so choose a location that fits
 your setup.
 
-To create a file you can get the default configuration filled with every possible setting by running
+To create a file you can obtain the default configuration filled with every possible setting by running
 ```
 iwdconfig --config
 ```
@@ -130,7 +129,7 @@ Write it to the file of your choice with
 iwdconfig --config > ~/.config/iwdconfig.conf
 ```
 
-In this file you should remove all the settings you don't want to change, for the case the default configuration changes in future versions (otherwise the all the
+In this file you should remove all the settings you don't want to change, for the case the default configuration changes in future versions (otherwise all the
 defaults will be overwritten by this file).
 
 ### Basic Configuration
@@ -145,7 +144,7 @@ You can specify the wifi device to use with the `device` option in the `general`
 The standard installation comes with two icon sets to choose. Use `dark` or `light` for the `img_subdir` option, to change it.
 
 #### Overwrite global *rofi* settings
-You can overwrite global settings by specify a `.rasi` file with the `rofi_theme_file` option. This option is set to `<install_dir>/res/style.rasi` to overwrite one single *rofi* setting by default. It is the `tab-stops` property of `element-text` elements to align the values in the connection details dialog of `iwdrofimenu` properly.
+You can overwrite global settings by specify a `.rasi` file with the `rofi_theme_file` option. This option is set to `<install_dir>/res/style.rasi` by default to overwrite one single *rofi* setting. It is the `tab-stops` property of `element-text` elements to align the values in the connection details dialog of `iwdrofimenu` property.
 
 This might cause problems if `iwdrofimenu` is used together with other modules, since in this case this setting is overwritten for all other modules too.
 If so you can set `rofi_theme_file` but leave it empty, so no `.rasi`-file will be
@@ -155,8 +154,11 @@ loaded seperatly from the global *rofi* configuration.
 Per default a sepator line is displayed between the control-elements and the network list entries. Set `show_seperator` to `False` to deactivate it. (You can also customize the seperator with a [Template](#templates))
 
 #### Templates
-You can change every string value output by *iwdwifimenu* through string templates in the `templates` section of the configuration file. Most of them are simple strings, but in some cases, you can use variables that will be replaced. If you look in the default configuration output by `iwdrofimenu --config` all possible variables are used, so you can play around.
+You can change every string value output by *iwdwifimenu* through string templates in the `templates` section of the configuration file. Most of them are simple strings, but in some cases, you can use variables (starting with `$`) which will be replaced. In the default configuration (which you can obtain by calling `iwdrofimenu --config`) all possible variables are used, so you can explore and play around by yourself (most of it should be pretty obvious).
 In the templates it is possible to use [Pango Markup](https://docs.gtk.org/Pango/pango_markup.html) for changing the font-color, weight, etc differently from the *rofi* theme.
+
+### Bugs
+Please be aware that this script may contain bugs that I am currently unaware of, as I have no possibilities to thoroughly test it. If you encounter any problems, feel free to open an issue so that I can attempt to resolve them.
 
 ## Similar projects
 Although there are a variety of alternatives that utilize *NetworkManager*, I could find

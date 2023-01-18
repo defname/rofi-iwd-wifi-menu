@@ -6,13 +6,18 @@ import sys
 HELP = """A rofi script to easily manage wifi networks with iwd/iwctl.
 
 Usage:
-  rofi -show WiFi -modi "WiFi:<filepath to this script>"
+  rofi -show WiFi -modi "WiFi:iwdrofimenu"
 
   This is just an example, look in the rofi(1) manpage for more information how
   to use rofi with scripts and other modes.
 
+Configuration:
+  iwdrofimenu --config
+  prins a complete configuration, which you can use as a foundation.
+
 Requirements:
-  You need Python 3, rofi and a working installation of the iwd network daemon.
+  You need Python 3, rofi and a working installation of the iwd network daemon
+  to be able to use this script.
 
 More Information:
   See https://github.com/davatorium/rofi or the rofi(1) manpage for more
