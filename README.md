@@ -91,7 +91,7 @@ Now it is possible to run
 rofi -show WiFi -modi `WiFi:iwdrofimenu`
 ```
 You can also add it to your global rofi configuration by adding `WiFi:iwdrofimenu` to the `modi` entry in your `~/.config/rofi/config.rasi`:
-```json
+```
 configuration {
     /* ... */
     modi: "drun,filebrowser,window,wifi:iwdrofimenu";
