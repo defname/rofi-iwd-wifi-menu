@@ -51,7 +51,10 @@ class IWD:
         TIMEOUT = 3
 
     def __init__(self, device="wlan0"):
-        """Constructor
+        """Constructor.
+
+        Initialize object's properties, update the connection state
+        (state property) and the device_info.
 
         Args:
             device (str): device as used in iwctl (default: "wlan0")
@@ -68,8 +71,13 @@ class IWD:
         self.known_networks = {}
         """A dictionary with all known networks. It's empty by default
         and need to be updated by calling update_known_networks()"""
+        self.device_info = {}
+        """A dictionary holding the information about the network device
+        as given by iwctl device <device> show. Need to be updated
+        with update_device_info()."""
 
         self.update_connection_state()
+        self.update_device_info()
 
     def get_output_simple(self, cmd, timeout=5):
         """Run a non-interactice command.
@@ -114,6 +122,17 @@ class IWD:
         line = line.replace("\x1b", "") \
             .replace("[1;90m>", " ")
         return line.strip()
+
+    def create_dict_from_table(self):
+        """TODO"""
+        regex = re.compile(r"^\s*(\S+(?:\s\S+)?)\s+(.*?)\s*$")
+        lines = map(self.clean_ouput_line,
+                    self.last_result.stdout.split("\n")[4:])
+        table = {m.group(1): m.group(2)
+                 for m in (regex.match(line) for line in lines if line)
+                 if m is not None}
+        return table
+
 
     def get_state(self, property):
         """Get an entry from the state property.
@@ -161,14 +180,8 @@ class IWD:
                                    "show"]) != 0:
             self.state = None
             return None
-        regex = re.compile(r"^\s*(\S+(?:\s\S+)?)\s+(.*?)\s*$")
-        lines = map(self.clean_ouput_line,
-                    self.last_result.stdout.split("\n")[4:])
-        state = {m.group(1): m.group(2)
-                 for m in (regex.match(line) for line in lines if line)
-                 if m is not None}
-        self.state = state
-        return state
+        self.state = self.create_dict_from_table()
+        return self.state
 
     def scan(self):
         """Scan for wifi networks.
@@ -272,7 +285,7 @@ class IWD:
         proc = pexpect.spawn(cmd[0], cmd[1:])
         i = proc.expect(["Passphrase:", pexpect.EOF, pexpect.TIMEOUT],
                         timeout=timeout)
-        
+
         if i == 0:  # login required
             if passphrase is None:
                 proc.kill(0)
@@ -316,3 +329,23 @@ class IWD:
             return None
         return True
 
+    def update_device_info(self):
+        """Update the device_info property.
+
+        Run "iwctl device <device> show" and store the gathered information
+        in the device_info dictionary and return it.
+
+        Returns:
+            The updated version of the device_info property
+        """
+        if self.get_output_simple(["iwctl",
+                                   "device",
+                                   self.device,
+                                   "show"]) != 0:
+            return None
+        self.device_info = self.create_dict_from_table()
+        return self.device_info
+
+    def adapter(self):
+        """Return the name of the wifi adapter."""
+        return self.device_info.get("Adapter", None)

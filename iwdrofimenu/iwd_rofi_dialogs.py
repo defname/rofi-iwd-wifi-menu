@@ -1,7 +1,7 @@
 """Classes defining the rofi dialogs for this script"""
 from string import Template
-from preferences import RES_DIR, ICONS, TEMPLATES, SIGNAL_QUALITY_TEXT,\
-        ROFI_THEME_FILE
+from settings import ICONS, TEMPLATES, SIGNAL_QUALITY_TEXT,\
+        ROFI_THEME_FILE, SHOW_SEPERATOR
 from .rofidialog import RofiDialog, RofiSimpleDialog
 
 
@@ -25,6 +25,19 @@ class RofiBasicDialog(RofiDialog):
                          }
         super().__init__(prompt, message, data, self.settings)
 
+    def add_seperator(self, custom_text=None):
+        """Add a seperator row with a default text from the TEMPLATES.
+
+        If TEMPLATES["seperator"] is empty, don't add a seperator.
+        """
+        text = ""
+        if custom_text is not None:
+            text = custom_text
+        else:
+            text = TEMPLATES["seperator"]
+        if SHOW_SEPERATOR:
+            self.add_row(text, nonselectable="true")
+
 
 class RofiPasswordInput(RofiSimpleDialog):
     """Dialog for password input.
@@ -34,7 +47,7 @@ class RofiPasswordInput(RofiSimpleDialog):
     def __init__(self, ssid, prompt="Passphrase", message=None):
         entries = [{"caption": TEMPLATES["cancel"],
                     "info": "cmd#abort",
-                    "icon": RES_DIR + "/" + ICONS["back"]
+                    "icon": ICONS["back"]
                     }]
         if message is None:
             message = f"Please enter the passphrase for {ssid} and press enter."
@@ -56,11 +69,11 @@ class RofiConfirmDialog(RofiSimpleDialog):
                  abort_caption="Back", abort_info=""):
         entries = [{"caption": confirm_caption,
                     "info": confirm_info,
-                    "icon": RES_DIR + "/" + ICONS["confirm"]
+                    "icon": ICONS["confirm"]
                     },
                    {"caption": abort_caption,
                     "info": abort_info,
-                    "icon": RES_DIR + "/" + ICONS["back"]
+                    "icon": ICONS["back"]
                     }
                    ]
         super().__init__(prompt,
@@ -70,6 +83,17 @@ class RofiConfirmDialog(RofiSimpleDialog):
                          no_custom="true"
                          )
 
+class RofiNoWifiDialog(RofiBasicDialog):
+    def __init__(self, prompt="SSID", data=""):
+        super().__init__(prompt,
+                         message=TEMPLATES["msg_wifi_disabled"],
+                         data=data,
+                         )
+        self.set_option("urgent", "0")
+        self.add_row(TEMPLATES["enable_wifi"],
+                     icon=ICONS["enable"],
+                     info="cmd#unblockwifi"
+                     )
 
 class RofiIWDDialog(RofiBasicDialog):
     """Another baseclass-like class for future cases.
@@ -105,11 +129,11 @@ class RofiShowActiveConnection(RofiIWDDialog):
 
         # add menu items
         self.add_row(TEMPLATES["back"],
-                     icon=RES_DIR + "/" + ICONS["back"]
+                     icon=ICONS["back"]
                      )
         self.add_row(TEMPLATES["disconnect"],
                      info="cmd#iwd#disconnect",
-                     icon=RES_DIR + "/" + ICONS["disconnect"]
+                     icon=ICONS["disconnect"]
                      )
 
         for name, value in self.iwd.state.items():
@@ -123,7 +147,7 @@ class RofiShowActiveConnection(RofiIWDDialog):
 
         self.add_row(TEMPLATES["discard"],
                      info="cmd#iwd#forget",
-                     icon=RES_DIR + "/" + ICONS["trash"]
+                     icon=ICONS["trash"]
                      )
 
 
@@ -160,16 +184,27 @@ class RofiNetworkList(RofiIWDDialog):
         # add menu items
         self.add_row(TEMPLATES["scan"],
                      info="cmd#iwd#scan",
-                     icon=RES_DIR + "/" + ICONS["scan"]
+                     icon=ICONS["scan"]
                      )
         self.add_row(TEMPLATES["refresh"],
                      info="cmd#refresh",
-                     icon=RES_DIR + "/" + ICONS["refresh"]
+                     icon=ICONS["refresh"]
                      )
+        seperator = self.add_seperator()
         
+        # add wifi networks
         self.networks = self.iwd.get_networks()
-        self.mark_known_or_active_networks(offset=2)
+        offset = 3 if SHOW_SEPERATOR else 2
+        self.mark_known_or_active_networks(offset=offset)
         self.add_networks_to_dialog()
+
+        # add disable menu item
+        self.add_seperator()
+        self.add_row(TEMPLATES["disable_wifi"],
+                     info="cmd#blockwifi",
+                     icon=ICONS["disable"]
+                     )
+
 
 
     def mark_known_or_active_networks(self, offset):
@@ -190,9 +225,9 @@ class RofiNetworkList(RofiIWDDialog):
 
     def choose_icon(self, nw):
         if nw["security"] != "open":
-            filename = RES_DIR + "/" + ICONS[f"wifi-signal-{nw['quality']}"]
+            filename = ICONS[f"wifi-signal-{nw['quality']}"]
         else:
-            filename = RES_DIR + "/" + ICONS[f"wifi-encrypted-signal-{nw['quality']}"]
+            filename = ICONS[f"wifi-encrypted-signal-{nw['quality']}"]
         return filename
 
     def add_network_to_dialog(self, nw):

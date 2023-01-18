@@ -3,10 +3,12 @@
 import os
 import sys
 from string import Template
+import subprocess
 from .iwd_rofi_dialogs import RofiNetworkList, RofiShowActiveConnection,\
-                             RofiPasswordInput, RofiConfirmDialog
+                             RofiPasswordInput, RofiConfirmDialog,\
+                             RofiNoWifiDialog
 from .iwdwrapper import IWD
-from preferences import TEMPLATES
+from settings import TEMPLATES
 
 
 class Main:
@@ -35,6 +37,8 @@ class Main:
             "cmd#iwd#disconnect": self.disconnect,
             "cmd#iwd#connect": self.connect,
             "cmd#iwd#forget": self.forget,
+            "cmd#blockwifi": self.block_wifi,
+            "cmd#unblockwifi": self.unblock_wifi,
         }
 
         print(f"ARG: {self.arg}, RETV: {self.retv}, DATA: {self.data}, INFO: {self.info}", file=sys.stderr)
@@ -42,6 +46,11 @@ class Main:
         # check self.data and self.info for commands and apply the associated
         # actions exit programm if apropriate dialog was started
         self.apply_actions(self, commands)
+
+        # check if wifi is disabled
+        if self.wifi_is_blocked(self):
+            RofiNoWifiDialog(TEMPLATES["prompt_ssid"])
+            sys.exit(0)
 
         # default dialog
         RofiNetworkList(self.iwd, message=self.message, data=self.data)
@@ -52,17 +61,63 @@ class Main:
         Choose the correct action depending on the user's input
         """
         done = False
+        # first check if a command is found in ROFI_DATA
+        # this has priority over ROFI_INFO and is used for the case the
+        # user write custom input (for example a password), which is
+        # passed in sys.argv[1] and not in ROFI_INFO like when a list
+        # entry is selected
+        # ROFI_DATA needs to be cleared after usage, otherwise it is
+        # passed to every following iteration (other than ROFI_INFO)
         if self.data:
             for prefix, action in commands.items():
                 if self.data.startswith(prefix):
                     action(self, self.data[len(prefix):])
                     done = True
-
+        
+        # if no command was triggered through ROFI_DATA check ROFI_INFO
         if done or not self.info:
             return
         for prefix, action in commands.items():
             if self.info.startswith(prefix):
                 action(self, self.info[len(prefix):])
+
+    def wifi_is_blocked(self):
+        """Check if wifi is disabled.
+
+        Returns:
+            true if wifi is disabled, false if it's enabled.
+        """
+        result = subprocess.run(["rfkill", "-n", "-r"],
+                                capture_output=True,
+                                text=True,
+                                check=True,  # throw an exception on errors
+                                env={"LANGUAGE": "en"}
+                                )
+        for line in result.stdout.split("\n"):
+            if line.find(self.iwd.adapter()) != -1:
+                if line.find(" blocked") != -1:
+                    return True
+                else:
+                    return False
+        raise IOError(f"{self.iwd.device()} not found in rfkill list.")
+
+    def block_wifi(self, dummy):
+        """Deactivate wifi entirely with rfkill"""
+        result = subprocess.run(["rfkill", "block", "wlan"],
+                                capture_output=True,
+                                text=True,
+                                check=False)
+        if result.returncode != 0:
+            self.message = "An error occured: " + result.stderr
+    
+    def unblock_wifi(self, dummy):
+        """Activate wifi with rfkill"""
+        result = subprocess.run(["rfkill", "unblock", "wlan"],
+                                capture_output=True,
+                                text=True,
+                                check=False)
+        if result.returncode != 0:
+            self.message = "An error occured: " + result.stderr
 
     def scan(self, dummy):
         """Scan for wifi networks"""
