@@ -51,7 +51,7 @@ If you want to try it out, get your copy and run it as *rofi* script
 ```sh
 git clone https://github.com/defname/rofi-iwd-wifi-menu
 cd rofi-iwd-wifi-menu
-rofi -show WiFI -modi "WiFi:./iwdrofimenu.py"
+rofi -show WiFi -modi "WiFi:./iwdrofimenu.py"
 ```
 With some luck, it just works out of the box.
 If it's not working, setting the name of your wifi device in a configuration file might help.
