@@ -4,11 +4,11 @@ import os
 import sys
 from string import Template
 import subprocess
+from settings import TEMPLATES
 from .iwd_rofi_dialogs import RofiNetworkList, RofiShowActiveConnection,\
                              RofiPasswordInput, RofiConfirmDialog,\
                              RofiNoWifiDialog
 from .iwdwrapper import IWD
-from settings import TEMPLATES
 
 
 class Main:
@@ -19,14 +19,16 @@ class Main:
     """
     def __init__(self, device="wlan0"):
         """Initialize objbect and do everything.
-        
+
         No other method should be called to use this class.
         """
         self.message = ""
         self.iwd = IWD(device)
         self.iwd.scan()
 
-        self.arg = None if len(sys.argv) < 2 else sys.argv[1]
+        self.arg = None
+        self.combi_mode = False
+        self.evaluate_argv()  # set argv and combi_mode
         self.retv = os.environ.get("ROFI_RETV")
         self.info = os.environ.get("ROFI_INFO")
         self.data = os.environ.get("ROFI_DATA")
@@ -53,7 +55,28 @@ class Main:
             sys.exit(0)
 
         # default dialog
-        RofiNetworkList(self.iwd, message=self.message, data=self.data)
+        RofiNetworkList(self.iwd,
+                        message=self.message,
+                        data=self.data,
+                        combi_mode=self.combi_mode
+                        )
+
+    def evaluate_argv(self):
+        """Evaluate sys.argv and set arg and combi_mode
+
+        sys.argv might be empty, contain an argument passed by rofi or
+        call parameter iwdrofimenu (e.g "--combi-mode").
+        Figure out whats the case and make sure in self.arg is the parameter
+        rofi passed to this script and combi_mode is set correctly.
+        """
+        argn = len(sys.argv)
+        if argn >= 2:
+            if sys.argv[1] == "--combi-mode":
+                self.combi_mode = True
+                if argn > 2:
+                    self.arg = sys.argv[2]
+            else:
+                self.arg = sys.argv[1]
 
     def apply_actions(self, commands):
         """Main logic of the program.

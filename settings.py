@@ -52,6 +52,13 @@ defaults = {
         "msg_connection_timeout": "Connection attempt to $ssid timed out",
         "msg_connection_successful": "Connection to $ssid established",
         "msg_wifi_disabled": "WiFi is currently disabled. Do you want to activate it?",
+        "meta_disable": "disable block wifi wlan",
+        "meta_enable": "enable unblock wifi wlan",
+        "meta_connect": "connect wifi wlan",
+        "meta_disconnect": "disconnect wifi wlan",
+        "meta_scan": "scan update wifi wlan",
+        "meta_refresh": "reload refresh update wifi wlan",
+        "meta_showactive": "active connection details wifi wlan"
         },
     "icons": {
         "back":         "arrow-left.png",

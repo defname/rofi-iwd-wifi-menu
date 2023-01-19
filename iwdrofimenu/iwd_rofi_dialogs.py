@@ -92,7 +92,8 @@ class RofiNoWifiDialog(RofiBasicDialog):
         self.set_option("urgent", "0")
         self.add_row(TEMPLATES["enable_wifi"],
                      icon=ICONS["enable"],
-                     info="cmd#unblockwifi"
+                     info="cmd#unblockwifi",
+                     meta=TEMPLATES["meta_enable"]
                      )
 
 class RofiIWDDialog(RofiBasicDialog):
@@ -162,14 +163,19 @@ class RofiNetworkList(RofiIWDDialog):
     "active" and known networks as "urgent" (for styling in the stylesheet).
     Choose correct icons depending on the quality of the wifi signal and
     if it's an open or encrypted network.
+
+    Can run in combi_mode (for rofi's combi_mode). In this case show
+    only known or open networks, disconnect, enable/disable.
+    (avoid any interactive dialog like password input)
     """
     row_template = Template(TEMPLATES["network_list_entry"])
 
-    def __init__(self, iwd, message=None, data=None):
+    def __init__(self, iwd, message=None, data=None, combi_mode=False):
         super().__init__(TEMPLATES["prompt_ssid"],
                          iwd,
                          message=message,
                          data=data)
+        self.combi_mode = combi_mode
 
         # if "network_list_entry_active" is not empty prepare template
         active_entry_template = TEMPLATES["network_list_entry_active"]
@@ -188,16 +194,25 @@ class RofiNetworkList(RofiIWDDialog):
         # add menu items
         self.add_row(TEMPLATES["scan"],
                      info="cmd#iwd#scan",
-                     icon=ICONS["scan"]
+                     icon=ICONS["scan"],
+                     meta=TEMPLATES["meta_scan"]
                      )
         self.add_row(TEMPLATES["refresh"],
                      info="cmd#refresh",
-                     icon=ICONS["refresh"]
+                     icon=ICONS["refresh"],
+                     meta=TEMPLATES["meta_refresh"]
                      )
-        seperator = self.add_seperator()
-        
+        self.add_seperator()
+
         # add wifi networks
-        self.networks = self.iwd.get_networks()
+        # if in combi-mode only add known networks
+        if self.combi_mode:
+            self.networks = [nw for nw in self.iwd.get_networks()
+                             if nw["ssid"] in self.iwd.known_networks
+                             ]
+        else:
+            self.networks = self.iwd.get_networks()
+
         offset = 3 if SHOW_SEPERATOR else 2
         self.mark_known_or_active_networks(offset=offset)
         self.add_networks_to_dialog()
@@ -206,18 +221,22 @@ class RofiNetworkList(RofiIWDDialog):
         self.add_seperator()
         self.add_row(TEMPLATES["disable_wifi"],
                      info="cmd#blockwifi",
-                     icon=ICONS["disable"]
+                     icon=ICONS["disable"],
+                     meta=TEMPLATES["meta_disable"]
                      )
 
-
-
     def mark_known_or_active_networks(self, offset):
+        """Mark known and active networks.
+
+        Do it only if not running in combi mode, then only mark active
+        network
+        """
         active = None
         known = []
         for idx, nw in enumerate(self.networks):
             if nw["ssid"] == self.iwd.ssid():
                 active = idx + offset
-            elif nw["ssid"] in self.iwd.known_networks:
+            elif nw["ssid"] in self.iwd.known_networks and not self.combi_mode:
                 known.append(idx + offset)
         if active is not None:
             self.set_option("active", f"{active}")
@@ -237,17 +256,24 @@ class RofiNetworkList(RofiIWDDialog):
     def add_network_to_dialog(self, nw):
         text = ""
         cmd = f"cmd#iwd#connect{nw['ssid']}"
+        meta = TEMPLATES["meta_connect"]
         nw['quality_str'] = SIGNAL_QUALITY_TEXT[nw['quality']]
         # choose the correct template
         if nw["ssid"] == self.iwd.ssid():
             text = self.row_template_active.substitute(nw)
-            cmd = f"cmd#iwd#showactiveconnection"
+            if self.combi_mode:
+                cmd = "cmd#iwd#disconnect"
+                meta = TEMPLATES["disconnect"]
+            else:
+                cmd = "cmd#iwd#showactiveconnection"
+                meta = TEMPLATES["meta_showactive"]
         elif nw["ssid"] in self.iwd.known_networks:
             text = self.row_template_known.substitute(nw)
         else:
             text = self.row_template.substitute(nw)
         self.add_row(text,
                      info=cmd,
-                     icon=self.choose_icon(nw))
-
+                     icon=self.choose_icon(nw),
+                     meta=meta
+                     )
 
