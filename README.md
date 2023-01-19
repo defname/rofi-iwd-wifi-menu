@@ -51,7 +51,7 @@ If you want to try it out, get your copy and run it as *rofi* script
 ```sh
 git clone https://github.com/defname/rofi-iwd-wifi-menu
 cd rofi-iwd-wifi-menu
-rofi -show WiFi -modi "WiFi:./iwdrofimenu.py"
+rofi -show wifi -modi "wifi:./iwdrofimenu.py"
 ```
 With some luck, it just works out of the box.
 If it's not working, setting the name of your wifi device in a configuration file might help.
@@ -86,9 +86,10 @@ The behaviour is as described above, but everything happens in the specified
 directory, not in `/usr`.
 (You have to make sure `~/.local/bin` exists and that it is in your `PATH`)
 
-Now it is possible to run
+## Usage
+When `iwdrofimenu` is installed you can run it with
 ```sh
-rofi -show WiFi -modi `WiFi:iwdrofimenu`
+rofi -show wifi -modi "wifi:iwdrofimenu"
 ```
 You can also add it to your global rofi configuration by adding `WiFi:iwdrofimenu` to the `modi` entry in your `~/.config/rofi/config.rasi`:
 ```
@@ -98,6 +99,24 @@ configuration {
     /* ... */
 }
 ```
+To use it in *rofi*'s combi-mode you can either run it directly with
+```sh
+rofi -show combi -modi combi -combi-modi drun,wifi:"iwdrofimenu --combi-mode"
+```
+or you change your *rofi* configuration to something like
+```
+configuration {
+    /* ... */
+    modi: "combi,drun,filebrowser,wifi:iwdrofimenu"
+    combi-modi: "drun,run,wifi:iwdrofimenu --combi-mode"
+    /* ... */
+}
+```
+and simply run
+```sh
+rofi -show combi
+```
+For more information on how to use *rofi* and it's different modes check the [rofi (1) manpages](https://github.com/davatorium/rofi/blob/next/doc/rofi.1.markdown)
 
 ## Configuration
 The appearance of *rofi* depends on your local settings and will most likely
