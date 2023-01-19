@@ -78,6 +78,10 @@ class Main:
             else:
                 self.arg = sys.argv[1]
 
+    def exit_if_combi_mode(self):
+        if self.combi_mode:
+            sys.exit(0)
+
     def apply_actions(self, commands):
         """Main logic of the program.
 
@@ -132,6 +136,8 @@ class Main:
         if result.returncode != 0:
             self.message = "An error occured: " + result.stderr
 
+        self.exit_if_combi_mode()
+
     def unblock_wifi(self, dummy):
         """Activate wifi with rfkill"""
         result = subprocess.run(["rfkill", "unblock", "wlan"],
@@ -140,6 +146,8 @@ class Main:
                                 check=False)
         if result.returncode != 0:
             self.message = "An error occured: " + result.stderr
+
+        self.exit_if_combi_mode()
 
     def scan(self, dummy):
         """Scan for wifi networks"""
@@ -156,6 +164,8 @@ class Main:
         print("disconnect", file=sys.stderr)
         self.iwd.disconnect()
         self.iwd.update_connection_state()
+
+        self.exit_if_combi_mode()
 
     def forget(self, arg):
         """Remove the active network from known networks.
@@ -212,6 +222,7 @@ class Main:
 
         if result == IWD.ConnectionResult.SUCCESS:
             template_str = TEMPLATES["msg_connection_successful"]
+            self.exit_if_combi_mode()
         if result == IWD.ConnectionResult.NOT_SUCCESSFUL:
             template_str = TEMPLATES["msg_connection_not_successful"]
         if result == IWD.ConnectionResult.TIMEOUT:

@@ -84,6 +84,8 @@ class RofiConfirmDialog(RofiSimpleDialog):
                          )
 
 class RofiNoWifiDialog(RofiBasicDialog):
+    """Display a "wifi disabled" message and an "activate" entry
+    """
     def __init__(self, prompt="SSID", data=""):
         super().__init__(prompt,
                          message=TEMPLATES["msg_wifi_disabled"],
@@ -95,6 +97,7 @@ class RofiNoWifiDialog(RofiBasicDialog):
                      info="cmd#unblockwifi",
                      meta=TEMPLATES["meta_enable"]
                      )
+
 
 class RofiIWDDialog(RofiBasicDialog):
     """Another baseclass-like class for future cases.
@@ -192,17 +195,18 @@ class RofiNetworkList(RofiIWDDialog):
         self.iwd.update_known_networks()
 
         # add menu items
-        self.add_row(TEMPLATES["scan"],
-                     info="cmd#iwd#scan",
-                     icon=ICONS["scan"],
-                     meta=TEMPLATES["meta_scan"]
-                     )
-        self.add_row(TEMPLATES["refresh"],
-                     info="cmd#refresh",
-                     icon=ICONS["refresh"],
-                     meta=TEMPLATES["meta_refresh"]
-                     )
-        self.add_seperator()
+        if not self.combi_mode:
+            self.add_row(TEMPLATES["scan"],
+                         info="cmd#iwd#scan",
+                         icon=ICONS["scan"],
+                         meta=TEMPLATES["meta_scan"]
+                         )
+            self.add_row(TEMPLATES["refresh"],
+                         info="cmd#refresh",
+                         icon=ICONS["refresh"],
+                         meta=TEMPLATES["meta_refresh"]
+                         )
+            self.add_seperator()
 
         # add wifi networks
         # if in combi-mode only add known networks
@@ -213,7 +217,9 @@ class RofiNetworkList(RofiIWDDialog):
         else:
             self.networks = self.iwd.get_networks()
 
-        offset = 3 if SHOW_SEPERATOR else 2
+        offset = 3 if (SHOW_SEPERATOR and TEMPLATES["seperator"]) else 2
+        if self.combi_mode:
+            offset = 0
         self.mark_known_or_active_networks(offset=offset)
         self.add_networks_to_dialog()
 
@@ -263,7 +269,7 @@ class RofiNetworkList(RofiIWDDialog):
             text = self.row_template_active.substitute(nw)
             if self.combi_mode:
                 cmd = "cmd#iwd#disconnect"
-                meta = TEMPLATES["disconnect"]
+                meta = TEMPLATES["meta_disconnect"]
             else:
                 cmd = "cmd#iwd#showactiveconnection"
                 meta = TEMPLATES["meta_showactive"]
@@ -271,6 +277,8 @@ class RofiNetworkList(RofiIWDDialog):
             text = self.row_template_known.substitute(nw)
         else:
             text = self.row_template.substitute(nw)
+        #if self.combi_mode:
+        #    meta = meta + " " + TEMPLATES["meta_combi_mode"]
         self.add_row(text,
                      info=cmd,
                      icon=self.choose_icon(nw),

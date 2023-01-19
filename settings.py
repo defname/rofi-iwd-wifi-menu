@@ -58,7 +58,7 @@ defaults = {
         "meta_disconnect": "disconnect wifi wlan",
         "meta_scan": "scan update wifi wlan",
         "meta_refresh": "reload refresh update wifi wlan",
-        "meta_showactive": "active connection details wifi wlan"
+        "meta_showactive": "active connection details wifi wlan",
         },
     "icons": {
         "back":         "arrow-left.png",
