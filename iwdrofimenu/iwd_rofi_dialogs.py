@@ -16,11 +16,11 @@ class RofiBasicDialog(RofiDialog):
         Import the rofi theme specified in preferences.py if it's not empty.
         Activate markup for the rows.
         """
-        self.settings = {"theme": 
+        self.settings = {"theme":
                             (f"@import \"{ROFI_THEME_FILE}\""
-                             if ROFI_THEME_FILE else
-                             "")\
-                                    + theme_snippet,
+                             if ROFI_THEME_FILE
+                             else "")
+                                + theme_snippet,
                          "markup-rows": "true"
                          }
         super().__init__(prompt, message, data, self.settings)
@@ -140,7 +140,7 @@ class RofiShowActiveConnection(RofiIWDDialog):
                      icon=ICONS["disconnect"]
                      )
         self.add_seperator()
-        
+
         # add connection infos
         for name, value in self.iwd.state.items():
             self.add_row(

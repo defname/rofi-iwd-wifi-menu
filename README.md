@@ -9,6 +9,8 @@ frontend for *iwd*/*iwctl*. The functionality is very basic. It is only possible
 to list networks, connect/disconnect, show details of the active connection,
 and remove the active connection from the known networks.
 
+*iwdrofimenu* can run in two slightly different modes. A normal mode where it is possible to manage the connections, and an other mode optimized for *rofi*'s combi mode. In this less interactive mode only known (available) networks and less options are listed.
+
 *iwd* (iNet Wireless Daemon) is a small, standalone
 wireless network daemon that seems to be much more resource-friendly than
 *[networkmanager](https://networkmanager.dev/)* (which I used before).
