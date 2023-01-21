@@ -88,6 +88,8 @@ The behaviour is as described above, but everything happens in the specified
 directory, not in `/usr`.
 (You have to make sure `~/.local/bin` exists and that it is in your `PATH`)
 
+If you use *Arch* Linux you can also install from [AUR (iwdrofimenu-git)](https://aur.archlinux.org/packages/iwdrofimenu-git).
+
 ## Usage
 When `iwdrofimenu` is installed you can run it with
 ```sh
