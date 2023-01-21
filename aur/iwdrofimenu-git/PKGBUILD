@@ -1,7 +1,7 @@
 # Maintainer: defname
 pkgname=iwdrofimenu-git
 _pkgname=iwdrofimenu
-pkgver=r32.fa7dfd6
+pkgver=r34.d7ad43f
 pkgrel=1
 pkgdesc="A rofi script providing a minimalistic wifi network chooser for iwd"
 arch=("any")
