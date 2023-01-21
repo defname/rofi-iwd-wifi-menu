@@ -24,18 +24,18 @@ program.
 <table>
 <tr>
 <td valign="center">
-  <div><img alt="Screenshot 1" src="screenshot1.png" width="240em" /></div>
+  <div><img alt="Screenshot 1" src="https://user-images.githubusercontent.com/7081451/213877647-4e047605-414b-4e87-a78f-1c8e6bc23f12.png" width="240em" /></div>
   <div algin="center">main dialog</div>
 </td>
 <td valign="center">
-  <div><img alt="Screenshot 2" src="screenshot2.png" width="240em" /></div>
+  <div><img alt="Screenshot 2" src="https://user-images.githubusercontent.com/7081451/213877674-5f3fc7c0-e294-42ce-9ee2-ee233e2caf0c.png" width="240em" /></div>
   <center>connection details</center>
 </td>
 <td valign="center">
-  <div><img alt="Screenshot 2" src="screenshot3.png" width="240em" /></div>
+  <div><img alt="Screenshot 2" src="https://user-images.githubusercontent.com/7081451/213877693-6a5d7380-40c5-45f6-a566-d66b1c2afe64.png" width="240em" /></div>
   <div text-algin="center">main dialog with rofis -no-config flag</div>
 <td valign="center">
-  <div><img alt="Screenshot 2" src="screenshot4.png" width="240em" /></div>
+  <div><img alt="Screenshot 2" src="https://user-images.githubusercontent.com/7081451/213877712-61002b54-d2ae-4078-a5c7-c193d30d93f6.png" width="240em" /></div>
   <div text-algin="center">integrated with other modes</div>
 </td>
 </tr>
