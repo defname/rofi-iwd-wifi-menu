@@ -4,6 +4,7 @@ import os
 import sys
 from string import Template
 import subprocess
+import logging
 from settings import TEMPLATES
 from .iwd_rofi_dialogs import RofiNetworkList, RofiShowActiveConnection,\
                              RofiPasswordInput, RofiConfirmDialog,\
@@ -17,18 +18,19 @@ class Main:
     Handle userinput (recieved as environment variables) and call the suitable
     method to take action.
     """
-    def __init__(self, device="wlan0"):
+    def __init__(self, device="wlan0", args=None):
         """Initialize objbect and do everything.
 
         No other method should be called to use this class.
         """
+        self.args = args
         self.message = ""
         self.iwd = IWD(device)
         self.iwd.scan()
 
-        self.arg = None
-        self.combi_mode = False
-        self.evaluate_argv()  # set argv and combi_mode
+        self.arg = self.args.arg
+        self.combi_mode = self.args.combi_mode
+        # self.evaluate_argv()  # set argv and combi_mode
         self.retv = os.environ.get("ROFI_RETV")
         self.info = os.environ.get("ROFI_INFO")
         self.data = os.environ.get("ROFI_DATA")
@@ -43,7 +45,8 @@ class Main:
             "cmd#unblockwifi": self.unblock_wifi,
         }
 
-        print(f"ARG: {self.arg}, RETV: {self.retv}, DATA: {self.data}, INFO: {self.info}", file=sys.stderr)
+        logging.info("ARG: %s, RETV: %s, DATA: %s, INFO: %s",
+                     self.arg, self.retv, self.data, self.info)
 
         # check self.data and self.info for commands and apply the associated
         # actions exit programm if apropriate dialog was started
@@ -161,7 +164,6 @@ class Main:
 
     def disconnect(self, dummy):
         """Disconnect and update connection state."""
-        print("disconnect", file=sys.stderr)
         self.iwd.disconnect()
         self.iwd.update_connection_state()
 
@@ -194,7 +196,6 @@ class Main:
 
         If a password is needed show a login dialog.
         """
-        print(f"connect to {ssid}", file=sys.stderr)
         if self.data:
             # in this case this method was triggered because
             # ROFI_DATA == "cmd#iwd#connect#{ssid}" and the password is passed
