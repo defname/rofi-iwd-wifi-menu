@@ -44,7 +44,10 @@ program.
 ## Dependencies
 As you probably guessed, you need a working installation of *iwd*,
 *rofi* and *Python 3* to use this script. All of these can be obtained from the official repositories of your favorite
-Linux distribution.
+Linux distribution. You also need to install the Python library [pexpect](https://github.com/pexpect/pexpect) which you should also find with your distributions packet manager (e.g. in *Arch* it's `python-pexpect`). Otherwise you can install it with Python's package manager by running
+```
+pip install pexpect
+```
 However, if you currently do not use iwd, you may not want to switch your wifi daemon as it may cause issues with integrated network buttons and other features in your Linux distribution's desktop environment.
 
 ## Installation
@@ -180,8 +183,11 @@ Per default a sepator line is displayed between the control-elements and the net
 You can change every string value output by *iwdwifimenu* through string templates in the `templates` section of the configuration file. Most of them are simple strings, but in some cases, you can use variables (starting with `$`) which will be replaced. In the default configuration (which you can obtain by calling `iwdrofimenu --config`) all possible variables are used, so you can explore and play around by yourself (most of it should be pretty obvious).
 In the templates it is possible to use [Pango Markup](https://docs.gtk.org/Pango/pango_markup.html) for changing the font-color, weight, etc differently from the *rofi* theme.
 
-### Bugs
+## Bugs
 Please be aware that this script may contain bugs that I am currently unaware of, as I have no possibilities to thoroughly test it. If you encounter any problems, feel free to open an issue so that I can attempt to resolve them.
+
+## Limitations
+It's not possibly to connect to hidden networks so far. (I'm even not sure if they show up in the list if they are already known). I never needed this feature and also have no easy possibility to test it. If it's something you really miss, let me know, maybe I find some time and add it.
 
 ## Similar projects
 Although there are a variety of alternatives that utilize *NetworkManager*, I could find
