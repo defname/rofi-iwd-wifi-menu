@@ -22,7 +22,7 @@ import sys
 from string import Template
 import subprocess
 import logging
-from settings import TEMPLATES
+from settings import TEMPLATES, RFKILL_CMD
 from .iwd_rofi_dialogs import RofiNetworkList, RofiShowActiveConnection,\
                              RofiPasswordInput, RofiConfirmDialog,\
                              RofiNoWifiDialog
@@ -134,7 +134,7 @@ class Main:
         Returns:
             true if wifi is disabled, false if it's enabled.
         """
-        result = subprocess.run(["rfkill", "-n", "-r"],
+        result = subprocess.run([RFKILL_CMD, "-n", "-r"],
                                 capture_output=True,
                                 text=True,
                                 check=True,  # throw an exception on errors

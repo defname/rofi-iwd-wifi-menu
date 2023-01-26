@@ -38,6 +38,7 @@ defaults = {
         "img_subdir": "dark",
         "rofi_theme_file": root_dir + "res/style.rasi",
         "show_seperator": True,
+        "rfkill_cmd": "rfkill",
         },
     "templates": {
         "signal_quality_str_1": "█░░░░",
@@ -116,6 +117,7 @@ config.read(config_files)
 DEVICE = config["general"]["device"]
 ROFI_THEME_FILE = config["general"]["rofi_theme_file"]
 SHOW_SEPERATOR = config["general"].getboolean("show_seperator")
+RFKILL_CMD = config["general"]["rfkill_cmd"]
 TEMPLATES = config["templates"]
 SIGNAL_QUALITY_TEXT = {i: config["templates"][f"signal_quality_str_{i}"]
                        for i in range(1, 6)
