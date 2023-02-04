@@ -46,7 +46,7 @@ EPILOG = """Configuration:
     ~/.iwdrofimenu.conf
 
 Requirements:
-  You need Python 3, th Python module pexpect, rofi and a working
+  You need Python 3, the Python module pexpect, rofi and a working
   installation of the iwd network daemon to be able to use this script.
 
 More Information:

@@ -148,11 +148,11 @@ your setup.
 
 To create a file you can obtain the default configuration filled with every possible setting by running
 ```
-iwdconfig --config
+iwdrofimenu --config
 ```
 Write it to the file of your choice with
 ```
-iwdconfig --config > ~/.config/iwdconfig.conf
+iwdrofimenu --config > ~/.config/iwdconfig.conf
 ```
 
 In this file you should remove all the settings you don't want to change, for the case the default configuration changes in future versions (otherwise all the
