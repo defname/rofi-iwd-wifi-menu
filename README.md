@@ -176,8 +176,8 @@ This might cause problems if `iwdrofimenu` is used together with other modules, 
 If so you can set `rofi_theme_file` but leave it empty, so no `.rasi`-file will be
 loaded seperatly from the global *rofi* configuration.
 
-#### Deactivate the Seperator
-Per default a sepator line is displayed between the control-elements and the network list entries. Set `show_seperator` to `False` to deactivate it. (You can also customize the seperator with a [Template](#templates))
+#### Deactivate the Separator
+Per default a separator line is displayed between the control-elements and the network list entries. Set `show_separator` to `False` to deactivate it. (You can also customize the separator with a [Template](#templates))
 
 #### Templates
 You can change every string value output by *iwdwifimenu* through string templates in the `templates` section of the configuration file. Most of them are simple strings, but in some cases, you can use variables (starting with `$`) which will be replaced. In the default configuration (which you can obtain by calling `iwdrofimenu --config`) all possible variables are used, so you can explore and play around by yourself (most of it should be pretty obvious).

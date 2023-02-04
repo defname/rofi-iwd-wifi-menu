@@ -18,7 +18,7 @@
 """Classes defining the rofi dialogs for this script"""
 from string import Template
 from settings import ICONS, TEMPLATES, SIGNAL_QUALITY_TEXT,\
-        ROFI_THEME_FILE, SHOW_SEPERATOR
+        ROFI_THEME_FILE, SHOW_SEPARATOR
 from .rofidialog import RofiDialog, RofiSimpleDialog
 
 
@@ -42,17 +42,17 @@ class RofiBasicDialog(RofiDialog):
                          }
         super().__init__(prompt, message, data, self.settings)
 
-    def add_seperator(self, custom_text=None):
-        """Add a seperator row with a default text from the TEMPLATES.
+    def add_separator(self, custom_text=None):
+        """Add a separator row with a default text from the TEMPLATES.
 
-        If TEMPLATES["seperator"] is empty, don't add a seperator.
+        If TEMPLATES["separator"] is empty, don't add a separator.
         """
         text = ""
         if custom_text is not None:
             text = custom_text
         else:
-            text = TEMPLATES["seperator"]
-        if SHOW_SEPERATOR:
+            text = TEMPLATES["separator"]
+        if SHOW_SEPARATOR:
             self.add_row(text, nonselectable="true")
 
 
@@ -156,7 +156,7 @@ class RofiShowActiveConnection(RofiIWDDialog):
                      info="cmd#iwd#disconnect",
                      icon=ICONS["disconnect"]
                      )
-        self.add_seperator()
+        self.add_separator()
 
         # add connection infos
         for name, value in self.iwd.state.items():
@@ -169,7 +169,7 @@ class RofiShowActiveConnection(RofiIWDDialog):
                     )
 
         # add "discard" entry
-        self.add_seperator()
+        self.add_separator()
         self.add_row(TEMPLATES["discard"],
                      info="cmd#iwd#forget",
                      icon=ICONS["trash"]
@@ -223,7 +223,7 @@ class RofiNetworkList(RofiIWDDialog):
                          icon=ICONS["refresh"],
                          meta=TEMPLATES["meta_refresh"]
                          )
-            self.add_seperator()
+            self.add_separator()
 
         # add wifi networks
         # if in combi-mode only add known networks
@@ -234,14 +234,14 @@ class RofiNetworkList(RofiIWDDialog):
         else:
             self.networks = self.iwd.get_networks()
 
-        offset = 3 if (SHOW_SEPERATOR and TEMPLATES["seperator"]) else 2
+        offset = 3 if (SHOW_SEPARATOR and TEMPLATES["separator"]) else 2
         if self.combi_mode:
             offset = 0
         self.mark_known_or_active_networks(offset=offset)
         self.add_networks_to_dialog()
 
         # add disable menu item
-        self.add_seperator()
+        self.add_separator()
         self.add_row(TEMPLATES["disable_wifi"],
                      info="cmd#blockwifi",
                      icon=ICONS["disable"],
