@@ -37,7 +37,7 @@ defaults = {
         "img_dir": root_dir + "res/icons",
         "img_subdir": "dark",
         "rofi_theme_file": root_dir + "res/style.rasi",
-        "show_seperator": True,
+        "show_separator": True,
         "rfkill_cmd": "rfkill",
         },
     "templates": {
@@ -53,7 +53,7 @@ defaults = {
         "prompt_ssid": "SSID", # this is also the default prompt
         "prompt_pass": "Passphrase",
         "prompt_confirm": "Are you sure",
-        "seperator": "──────────────────────────────",
+        "separator": "──────────────────────────────",
         "scan": "Scan",
         "back": "Back",
         "cancel": "Cancel",
@@ -116,7 +116,7 @@ config.read(config_files)
 
 DEVICE = config["general"]["device"]
 ROFI_THEME_FILE = config["general"]["rofi_theme_file"]
-SHOW_SEPERATOR = config["general"].getboolean("show_seperator")
+SHOW_SEPARATOR = config["general"].getboolean("show_separator")
 RFKILL_CMD = config["general"]["rfkill_cmd"]
 TEMPLATES = config["templates"]
 SIGNAL_QUALITY_TEXT = {i: config["templates"][f"signal_quality_str_{i}"]
