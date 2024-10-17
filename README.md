@@ -42,7 +42,7 @@ program.
 </table>
 
 ## Dependencies
-As you probably guessed, you need a working installation of *iwd*,
+As you probably guessed, you need a working installation of *iwd* (make sure your user has the needed permissions to run `iwctl`!),
 *rofi* and *Python 3* to use this script. All of these can be obtained from the official repositories of your favorite
 Linux distribution. You also need to install the Python library [pexpect](https://github.com/pexpect/pexpect) which you should also find with your distributions packet manager (e.g. in *Arch* it's `python-pexpect`). Otherwise you can install it with Python's package manager by running
 ```

@@ -81,6 +81,9 @@ if __name__ == "__main__":
         sys.exit(0)
     if args.verbose:
         logging.basicConfig(level=logging.DEBUG)
-
-    iwdrofimenu.Main(DEVICE, args)
+    try:
+        iwdrofimenu.Main(DEVICE, args)
+    except IOError as error:
+        print("An error occured:")
+        print(error)
 

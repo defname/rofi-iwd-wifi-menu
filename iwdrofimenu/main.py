@@ -140,12 +140,16 @@ class Main:
                                 check=True,  # throw an exception on errors
                                 env={"LANGUAGE": "en"}
                                 )
+        adapter = self.iwd.adapter()
+        if adapter is None:
+            raise IOError(f"Something went wrong while querying {self.iwd.device}. "
+                        f"Try to run 'iwctl device {self.iwd.device} show' manually to see what's going on.")
         for line in result.stdout.split("\n"):
-            if line.find(self.iwd.adapter()) != -1:
+            if line.find(adapter) != -1:
                 if line.find(" blocked") != -1:
                     return True
                 return False
-        raise IOError(f"{self.iwd.device()} not found in rfkill list.")
+        raise IOError(f"{self.iwd.device} not found in rfkill list.")
 
     def block_wifi(self, dummy):
         """Deactivate wifi entirely with rfkill"""
